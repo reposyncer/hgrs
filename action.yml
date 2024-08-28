@@ -1,0 +1,51 @@
+name: 'Remote Repository Sync'
+description: 'A GitHub Action to sync a Mercurial (hg) repository with the current GitHub repository'
+author: 'Repo Syncer'
+inputs:
+  url:
+    description: 'The URL of the remote Mercurial repository'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Checkout current GitHub repository
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y mercurial git python3-pip
+        pip install hg-fast-export
+
+    - name: Clone Mercurial repository
+      run: |
+        hg clone "${{ inputs.url }}" hg-repo
+      shell: bash
+
+    - name: Convert Mercurial repository to Git
+      run: |
+        cd hg-repo
+        git init
+        hg-fast-export -r .
+        git checkout HEAD
+      shell: bash
+
+    - name: Set Git Configurations
+      run: |
+        git config user.name "GitHub Actions"
+        git config user.email "actions@github.com"
+      shell: bash
+
+    - name: Push all branches and tags to origin
+      run: |
+        git remote set-url origin "${{ github.repository_url }}"
+        git push origin --all --force
+        git push origin --tags --force
+      shell: bash
+
+branding:
+  icon: 'refresh-cw'
+  color: 'blue'
