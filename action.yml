@@ -19,6 +19,7 @@ runs:
         sudo apt-get update
         sudo apt-get install -y mercurial git python3-pip
         pip install hg-fast-export
+      shell: bash
 
     - name: Clone Mercurial repository
       run: |
