@@ -21,25 +21,9 @@ runs:
         pip install git-remote-hg
       shell: bash
 
-    - name: Clone Mercurial repository
+    - name: Clone Mercurial repository using git-remote-hg
       run: |
-        hg clone "${{ inputs.url }}" hg-repo
-      shell: bash
-
-    - name: Set up Git-Remote-HG
-      run: |
-        git clone https://github.com/feickert/git-remote-hg.git
-        cd git-remote-hg
-        python3 setup.py install
-      shell: bash
-
-    - name: Convert Mercurial repository to Git
-      run: |
-        git init git-repo
-        cd git-repo
-        git remote add hg ../hg-repo
-        git fetch hg
-        git checkout -b main
+        git clone "hg::${{ inputs.url }}" hg-repo
       shell: bash
 
     - name: Set Git Configurations
@@ -50,6 +34,7 @@ runs:
 
     - name: Push all branches and tags to origin
       run: |
+        cd hg-repo
         git remote add origin "${{ github.repository_url }}"
         git push origin --all --force
         git push origin --tags --force
