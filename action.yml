@@ -1,4 +1,4 @@
-name: 'Remote Repository Sync'
+name: 'Mercurial Repository Sync'
 description: 'A GitHub Action to sync a Mercurial (hg) repository with the current GitHub repository'
 author: 'Repo Syncer'
 inputs:
