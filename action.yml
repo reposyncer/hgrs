@@ -32,10 +32,16 @@ runs:
         git config user.email "actions@github.com"
       shell: bash
 
+    - name: Update or Add Remote Origin
+      run: |
+        cd hg-repo
+        git remote get-url origin || git remote add origin "${{ github.repository_url }}"
+        git remote set-url origin "${{ github.repository_url }}"
+      shell: bash
+
     - name: Push all branches and tags to origin
       run: |
         cd hg-repo
-        git remote add origin "${{ github.repository_url }}"
         git push origin --all --force
         git push origin --tags --force
       shell: bash
