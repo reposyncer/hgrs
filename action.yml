@@ -1,4 +1,4 @@
-name: 'Mercurial Repository Sync'
+name: 'Remote Repository Sync'
 description: 'A GitHub Action to sync a Mercurial (hg) repository with the current GitHub repository'
 author: 'Repo Syncer'
 inputs:
@@ -28,15 +28,19 @@ runs:
 
     - name: Set Git Configurations
       run: |
-        git config user.name "GitHub Actions"
-        git config user.email "actions@github.com"
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
       shell: bash
 
-    - name: Update or Add Remote Origin
+    - name: Initialize Git repository and set origin
       run: |
         cd hg-repo
-        git remote get-url origin || git remote add origin "${{ github.repository_url }}"
-        git remote set-url origin "${{ github.repository_url }}"
+        git init  # Initialize the directory as a git repository
+        if git remote | grep origin; then
+          git remote set-url origin "${{ github.repository_url }}"
+        else
+          git remote add origin "${{ github.repository_url }}"
+        fi
       shell: bash
 
     - name: Push all branches and tags to origin
